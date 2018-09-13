@@ -5,8 +5,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+
+import java.util.Collection;
 
 /**
  * 认证
@@ -27,8 +30,8 @@ public class AuthenticateProvider extends DaoAuthenticationProvider {
 //        if (!user.isEnabled()) {
 //            throw new DisabledException("用户被禁用");
 //        }
-//        Collection<? extends GrantedAuthority> grantedAuthorities = user.getAuthorities();
-        return new UsernamePasswordAuthenticationToken(user, password, null);
+        Collection<? extends GrantedAuthority> grantedAuthorities = user.getAuthorities();
+        return new UsernamePasswordAuthenticationToken(user, password, grantedAuthorities);
     }
 
     @Override

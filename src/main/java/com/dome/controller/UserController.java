@@ -26,6 +26,7 @@ public class UserController {
     public String user() {
        User user= userService.getUserByName("test");
        System.out.println(user.getId()+"-----"+user.getPassword());
+       user.getRoles();
        return user.getPassword();
     }
     @RequestMapping("/role")

@@ -11,11 +11,13 @@ public class AuthorizeConfigProviderImpl implements AuthorizeConfigProvider {
     @Override
     public void config(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry config) throws Exception {
 
-        config
-                .antMatchers("/","message").permitAll()
-                .antMatchers("/user/*").permitAll()
-                .antMatchers("/oauth/*").permitAll()
-        .anyRequest().permitAll();
+//        config
+//                .antMatchers("/","message").permitAll()
+//                .antMatchers("/user/*").permitAll();
+//                .antMatchers("/oauth/*").permitAll();
+
+//        config.antMatchers("/test/user").hasRole("admin");
+        config.anyRequest().authenticated();
 //        config.antMatchers("/person/*").access("hasRole('ADMIN') or hasRole('USER')")
 //                .antMatchers("/person/{id}").access("@rbacService.checkUserId(authentication,#id)")
 //                .anyRequest()

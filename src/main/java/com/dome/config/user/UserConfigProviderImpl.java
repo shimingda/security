@@ -9,7 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.stereotype.Component;
 
 @Component
-@Order(Integer.MAX_VALUE)
+@Order(1)
 public class UserConfigProviderImpl implements UserConfigProvider {
 
     @Autowired
@@ -22,7 +22,7 @@ public class UserConfigProviderImpl implements UserConfigProvider {
         //登录验证配置
         configurer
                 .formLogin()
-                .loginPage("/login").permitAll()
+                .loginPage("/login")
                 .loginProcessingUrl("/user/login2")
                 .usernameParameter("username")
                 .passwordParameter("password")

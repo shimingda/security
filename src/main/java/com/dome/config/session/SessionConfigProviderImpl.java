@@ -9,7 +9,7 @@ import org.springframework.security.web.session.SessionInformationExpiredStrateg
 import org.springframework.stereotype.Component;
 
 @Component
-@Order(Integer.MAX_VALUE)
+@Order(1)
 public class SessionConfigProviderImpl implements SessionConfigProvider {
     @Autowired
     private SecurityProperties securityProperties;
