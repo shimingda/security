@@ -16,12 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Created on 2018/1/7 0007.
  * 自定义登录失败处理
  *
- * @author zlf
- * @email i@merryyou.cn
- * @since 1.0
  */
 @Component(value = "merryyouAuthenticationfailureHandler")
 public class MerryyouAuthenticationfailureHandler extends SimpleUrlAuthenticationFailureHandler {

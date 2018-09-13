@@ -20,7 +20,7 @@
             </pattern>
         </layout>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-             <level>INFO</level>
+             <level>debug</level>
         </filter>
     </appender>
 

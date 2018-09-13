@@ -15,14 +15,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Created on 2018/1/27 0027.
- *
- * @author zlf
- * @email i@merryyou.cn
- * @since 1.0
+ * 成功退出
  */
 @Slf4j
-
 public class MerryyouLogoutSuccessHandler implements LogoutSuccessHandler {
 
     private String signOutSuccessUrl;
@@ -35,7 +30,7 @@ public class MerryyouLogoutSuccessHandler implements LogoutSuccessHandler {
 
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-//        log.info("退出成功");
+        log.info("退出成功");
 
         if (StringUtils.isBlank(signOutSuccessUrl)) {
             response.setContentType("application/json;charset=UTF-8");

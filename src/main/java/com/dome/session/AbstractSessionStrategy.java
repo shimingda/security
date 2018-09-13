@@ -1,6 +1,4 @@
 package com.dome.session;
-
-
 import com.dome.constant.ResultEnum;
 import com.dome.utils.ResultUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;

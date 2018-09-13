@@ -2,12 +2,6 @@ package com.dome.utils;
 
 import com.dome.entity.Result;
 
-/**
- * Created on 2017/11/7.
- *
- * @author zlf
- * @since 1.0
- */
 public class ResultUtil {
     public static Object success(Object object) {
         Result result = new Result();

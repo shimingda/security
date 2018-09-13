@@ -1,20 +1,15 @@
 package com.dome.authenticate;
 
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-
 /**
  * 认证
- * Created by zhangwen@reconova.com on 2016/12/15.
  */
 @Component
 public class AuthenticateProvider extends DaoAuthenticationProvider {

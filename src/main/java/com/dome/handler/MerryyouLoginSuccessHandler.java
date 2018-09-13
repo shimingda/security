@@ -15,11 +15,6 @@ import java.io.IOException;
 
 /**
  * 登录成功处理器
- * Created on 2018/1/28 0028.
- *
- * @author zlf
- * @email i@merryyou.cn
- * @since 1.0
  */
 @Component("merryyouLoginSuccessHandler")
 public class MerryyouLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler{

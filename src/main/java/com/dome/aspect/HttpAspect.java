@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-
 /**
  * 预防暴力访问和记录url访问信息
  *
@@ -28,7 +27,8 @@ public class HttpAspect {
     public void log() {
         System.out.println(123);
     }
-
+    //todo
+    //现在存放在session中，应该放在redis
     @Before("log()")
     public void doBefore(JoinPoint joinPoint) throws Exception {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
