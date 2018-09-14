@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 
@@ -51,12 +52,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void globalConfigure(AuthenticationManagerBuilder auth){
         auth.authenticationProvider(authenticateProvider());
     }
-
+    // Remove the ROLE_ prefix
+    @Bean
+    GrantedAuthorityDefaults grantedAuthorityDefaults() {
+        return new GrantedAuthorityDefaults("");
+    }
     @Bean
     public AuthenticateProvider authenticateProvider() {
         AuthenticateProvider provider = new AuthenticateProvider();
         provider.setUserDetailsService(userService);
-       provider.setPasswordEncoder(new BCryptPasswordEncoder());
+        provider.setPasswordEncoder(new BCryptPasswordEncoder());
         return provider;
     }
 

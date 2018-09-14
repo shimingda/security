@@ -17,11 +17,13 @@ public class Role {
 
     @Column(name = "name")
     private String name;
-    @ManyToMany
+
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "r_roles_permission",
             joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "permission_id", referencedColumnName = "id"))
     @JsonIgnore
     private Collection<Permission> permissions;
+
 }
