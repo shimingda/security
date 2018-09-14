@@ -3,6 +3,7 @@ package com.dome.authenticate;
 
 import com.dome.entity.MyUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 
 @Component
@@ -31,8 +34,8 @@ public class MyCustomUserService implements UserDetailsService {
 
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 //        MyUserDetails userDetails= (MyUserDetails) authentication.getPrincipal();
-
-        return new User(username, passwordEncoder.encode("123456"), AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_USER"));
+        List<GrantedAuthority> grantedAuthorities=AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_admin");
+        return new User(username, passwordEncoder.encode("123456"), grantedAuthorities);
 
     }
 }

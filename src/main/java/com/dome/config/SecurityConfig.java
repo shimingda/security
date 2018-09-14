@@ -2,12 +2,9 @@ package com.dome.config;
 
 import com.dome.authenticate.AuthenticateProvider;
 import com.dome.authenticate.MyCustomUserService;
-
-import com.dome.config.authorize.AuthorizeConfigProvider;
 import com.dome.config.properties.SecurityProperties;
-
-import com.dome.config.session.SessionConfigProvider;
-import com.dome.config.user.UserConfigProvider;
+import com.dome.handler.MerryyouAuthenticationfailureHandler;
+import com.dome.handler.MerryyouLoginSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +15,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 
 /**
  * 核心配置文件
@@ -26,8 +24,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    @Autowired
-    private AuthorizeConfigProvider authorizeConfigProvider;
 
     @Autowired
     private MyCustomUserService userService;
@@ -36,10 +32,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private SecurityProperties securityProperties;
 
     @Autowired
-    private SessionConfigProvider sessionConfigProvider;
+    private SessionInformationExpiredStrategy sessionInformationExpiredStrategy;
 
     @Autowired
-    private UserConfigProvider userConfigProvider;
+    private MerryyouLoginSuccessHandler myAuthenticationSuccessHandler;
+
+    @Autowired
+    private MerryyouAuthenticationfailureHandler myAuthenticationFailHandler;
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
@@ -72,14 +71,40 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
 
-        http.authorizeRequests().anyRequest().authenticated();
+        http
+                .authorizeRequests()
+                .antMatchers("/test/user").permitAll()
+                .antMatchers("/test/role").hasAnyRole("admin")
+                .antMatchers("/test/permission").hasRole("super_admin")
 
-        //用户单独配置
-        userConfigProvider.config(http);
-        //session单独配置
-        sessionConfigProvider.config(http);
-        //权限角色过滤单独配置
-        authorizeConfigProvider.config(http.authorizeRequests());
+                .anyRequest().authenticated();
+
+        //session管理
+        http
+                .sessionManagement()
+                //  .invalidSessionStrategy(invalidSessionStrategy)
+                .invalidSessionUrl("/login")//session失效跳转页面
+                .maximumSessions(securityProperties.getSession().getMaximumSessions())//最大session并发数量1
+                .maxSessionsPreventsLogin(securityProperties.getSession().isMaxSessionsPreventsLogin())//之后的登录踢掉之前的登录
+                .expiredSessionStrategy(sessionInformationExpiredStrategy);
+        //登录验证配置
+        http
+                .formLogin()
+                .loginProcessingUrl("/user/login2")
+                .usernameParameter("username")
+                .passwordParameter("password")
+                //　自定义的登录验证成功或失败后的去向
+                .successHandler(myAuthenticationSuccessHandler)
+                // .successHandler(appLoginInSuccessHandler)
+                .failureHandler(myAuthenticationFailHandler);
+        // 安全退出用户
+        http
+                .logout()
+                .logoutUrl("signOut").permitAll()
+                .deleteCookies("")
+                .invalidateHttpSession(true)
+                .logoutSuccessUrl("/");
+
         // 禁用csrf防御机制(跨域请求伪造)，这么做在测试和开发会比较方便。
         http.csrf().disable();
         // token管理
