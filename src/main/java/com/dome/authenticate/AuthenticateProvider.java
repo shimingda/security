@@ -1,5 +1,6 @@
 package com.dome.authenticate;
 
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -23,13 +24,10 @@ public class AuthenticateProvider extends DaoAuthenticationProvider {
         String username = authentication.getName();
         String password = (String) authentication.getCredentials();
         UserDetails user = this.getUserDetailsService().loadUserByUsername(username);
-//        if (true) {
-//            throw new BadCredentialsException("用户不存在");
-//        }
-//
-//        if (!user.isEnabled()) {
-//            throw new DisabledException("用户被禁用");
-//        }
+        if (user.isEnabled()) {
+            throw new BadCredentialsException("用户被禁用");
+        }
+
         Collection<? extends GrantedAuthority> grantedAuthorities = user.getAuthorities();
         return new UsernamePasswordAuthenticationToken(user, password, grantedAuthorities);
     }

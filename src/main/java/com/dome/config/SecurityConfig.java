@@ -69,16 +69,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
-
+        //权限控制
         http
                 .authorizeRequests()
-                .antMatchers("/test/user").permitAll()
+                .antMatchers("/user/save").permitAll()
                 .antMatchers("/test/role").hasAnyRole("admin")
                 .antMatchers("/test/permission").hasRole("super_admin")
-
+                .antMatchers("/user/permission").access("super_admin")
                 .anyRequest().authenticated();
-
         //session管理
         http
                 .sessionManagement()
@@ -104,9 +102,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .deleteCookies("")
                 .invalidateHttpSession(true)
                 .logoutSuccessUrl("/");
-
         // 禁用csrf防御机制(跨域请求伪造)，这么做在测试和开发会比较方便。
-        http.csrf().disable();
+        http
+                .csrf().disable();
         // token管理
         http
                 .rememberMe()

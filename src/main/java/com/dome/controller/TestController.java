@@ -2,7 +2,7 @@ package com.dome.controller;
 
 import com.dome.entity.Permission;
 import com.dome.entity.Role;
-import com.dome.entity.User;
+import com.dome.entity.SysUser;
 import com.dome.service.PermissionService;
 import com.dome.service.RoleService;
 import com.dome.service.UserService;
@@ -23,7 +23,7 @@ public class TestController {
     private PermissionService permissionService;
    @RequestMapping("/user")
     public String user() {
-       User user= userService.getUserByName("test");
+       SysUser user= userService.getUserByName("test");
        System.out.println(user.getId()+"-----"+user.getPassword());
        user.getRoles();
        return user.getPassword();

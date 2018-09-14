@@ -1,5 +1,6 @@
 package com.dome.aspect;
 
+import com.dome.redis.CacheUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.slf4j.Logger;
@@ -33,10 +34,12 @@ public class HttpAspect {
     public void doBefore(JoinPoint joinPoint) throws Exception {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
-        StringBuffer url =request.getRequestURL();
-        url.append(request.getMethod());
+        String sessionId=request.getSession().getId();
 
-        timeList= (LinkedList<Long>) request.getSession().getAttribute(url.toString());
+        StringBuffer url =request.getRequestURL();
+        url.append(request.getMethod()).append(sessionId);
+
+        timeList= CacheUtils.getBean(url.toString(),LinkedList.class);
         if(timeList==null||timeList.isEmpty()){
             timeList=new LinkedList<>();
         }
@@ -50,9 +53,9 @@ public class HttpAspect {
             System.out.println(lastTime);
             System.out.println(last2Time);
             if(lastTime-last2Time<3000){
-                Long fristTime=timeList.getFirst();
-                System.out.println(fristTime);
-                if(lastTime-fristTime<30000){
+                Long firstTime=timeList.getFirst();
+                System.out.println(firstTime);
+                if(lastTime-firstTime<30000){
                     throw new Exception("调用太过频繁");
                 }
             }
@@ -62,8 +65,7 @@ public class HttpAspect {
         logger.info("利用AOP记录每次请求的有关信息，url={}，method={}，ip={}", request.getRequestURL(), request.getMethod(), request.getRemoteAddr());
         //类方法 参数
         logger.info("class_method={}, args={}", joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName(), joinPoint.getArgs());
-
-        request.getSession().setAttribute(url.toString(),timeList);
+        CacheUtils.saveBean(url.toString(),timeList);
     }
 
     @After("log()")

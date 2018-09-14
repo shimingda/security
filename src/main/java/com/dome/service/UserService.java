@@ -1,10 +1,12 @@
 package com.dome.service;
 
-import com.dome.entity.User;
+import com.dome.entity.SysUser;
 
 /**
  *
  */
 public interface UserService {
-     User getUserByName(String username);
+     SysUser getUserByName(String username);
+
+     void save(SysUser user);
 }
