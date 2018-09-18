@@ -40,6 +40,5 @@ public class MerryyouAuthenticationfailureHandler extends SimpleUrlAuthenticatio
         }else{
             response.getWriter().write(objectMapper.writeValueAsString(ResultUtil.error(ResultEnum.FAIL.getCode(), exception.getMessage())));
         }
-
     }
 }

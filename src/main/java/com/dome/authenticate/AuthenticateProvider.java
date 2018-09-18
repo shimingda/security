@@ -8,6 +8,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -28,14 +29,14 @@ public class AuthenticateProvider extends DaoAuthenticationProvider {
         String password = (String) authentication.getCredentials();
         UserDetails user = this.getUserDetailsService().loadUserByUsername(username);
 
-        if (user.getPassword().equals(passwordEncoder.encode(password))){
+        if (!user.getPassword().equals(passwordEncoder.encode(password))){
             throw new BadCredentialsException("用户名密码不匹配");
         }
         if (user.isEnabled()) {
             throw new BadCredentialsException("用户被禁用");
         }
         Collection<? extends GrantedAuthority> grantedAuthorities = user.getAuthorities();
-        return new UsernamePasswordAuthenticationToken(user, password, grantedAuthorities);
+        return new UsernamePasswordAuthenticationToken(user, password, AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_admin"));
     }
 
     @Override

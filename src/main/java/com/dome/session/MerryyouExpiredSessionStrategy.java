@@ -22,7 +22,7 @@ public class MerryyouExpiredSessionStrategy extends AbstractSessionStrategy impl
     @Override
     public void onExpiredSessionDetected(SessionInformationExpiredEvent event) throws IOException, ServletException {
 
-        onSessionInvalid(event.getRequest(), event.getResponse());
+        onSessionExpired(event.getRequest(), event.getResponse());
     }
 
     @Override

@@ -11,6 +11,7 @@ import lombok.Data;
  * @since 1.0
  */
 
+@Data
 public class SessionProperties {
     /**
      * 同一个用户在系统中的最大session数，默认1
@@ -25,27 +26,6 @@ public class SessionProperties {
      */
     private String sessionInvalidUrl = SecurityConstants.DEFAULT_SESSION_INVALID_URL;
 
-    public int getMaximumSessions() {
-        return maximumSessions;
-    }
+    private String sessionExpiredUrl = SecurityConstants.DEFAULT_SESSION_EXPIRED_URL;
 
-    public void setMaximumSessions(int maximumSessions) {
-        this.maximumSessions = maximumSessions;
-    }
-
-    public boolean isMaxSessionsPreventsLogin() {
-        return maxSessionsPreventsLogin;
-    }
-
-    public void setMaxSessionsPreventsLogin(boolean maxSessionsPreventsLogin) {
-        this.maxSessionsPreventsLogin = maxSessionsPreventsLogin;
-    }
-
-    public String getSessionInvalidUrl() {
-        return sessionInvalidUrl;
-    }
-
-    public void setSessionInvalidUrl(String sessionInvalidUrl) {
-        this.sessionInvalidUrl = sessionInvalidUrl;
-    }
 }

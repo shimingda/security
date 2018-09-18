@@ -33,7 +33,7 @@ public class SessionSecurityBeanConfig {
 
     @Bean
     public SessionInformationExpiredStrategy sessionInformationExpiredStrategy(){
-        return new MerryyouExpiredSessionStrategy(securityProperties.getSession().getSessionInvalidUrl());
+        return new MerryyouExpiredSessionStrategy(securityProperties.getSession().getSessionExpiredUrl());
     }
 
     @Bean

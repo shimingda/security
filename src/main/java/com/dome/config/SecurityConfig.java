@@ -15,7 +15,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.session.InvalidSessionStrategy;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 
 /**
@@ -42,12 +45,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private MerryyouAuthenticationfailureHandler myAuthenticationFailHandler;
 
     @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-                .inMemoryAuthentication()
-                .withUser("user").password("password").roles("admin");
-    }
+    private SessionRegistry sessionRegistry;
 
+    @Autowired
+    private InvalidSessionStrategy invalidSessionStrategy;
     @Autowired
     public void globalConfigure(AuthenticationManagerBuilder auth){
         auth.authenticationProvider(authenticateProvider());
@@ -77,7 +78,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //权限控制
         http
                 .authorizeRequests()
-                .antMatchers("/user/save").permitAll()
+                .antMatchers("/user/save","/session/*").permitAll()
                 .antMatchers("/test/role").hasAnyRole("admin")
                 .antMatchers("/test/permission").hasRole("super_admin")
                 .antMatchers("/user/permission").access("super_admin")
@@ -85,11 +86,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //session管理
         http
                 .sessionManagement()
-                //  .invalidSessionStrategy(invalidSessionStrategy)
-                .invalidSessionUrl("/login")//session失效跳转页面
+                .invalidSessionStrategy(invalidSessionStrategy)//session失效策略处理
                 .maximumSessions(securityProperties.getSession().getMaximumSessions())//最大session并发数量1
                 .maxSessionsPreventsLogin(securityProperties.getSession().isMaxSessionsPreventsLogin())//之后的登录踢掉之前的登录
-                .expiredSessionStrategy(sessionInformationExpiredStrategy);
+                .expiredSessionStrategy(sessionInformationExpiredStrategy)//并发过期处理
+                .sessionRegistry(sessionRegistry)
+                ;
+        //http缓存
+        http
+                .requestCache()
+                .requestCache(new HttpSessionRequestCache());
         //登录验证配置
         http
                 .formLogin()
@@ -111,9 +117,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable();
         // token管理
-        http
-                .rememberMe()
-                .tokenValiditySeconds(securityProperties.getRememberMeSeconds())
-                .userDetailsService(userService);
+//        http
+//                .rememberMe()
+//                .tokenValiditySeconds(securityProperties.getRememberMeSeconds())
+//                .userDetailsService(userService);
+        http.httpBasic();
     }
 }

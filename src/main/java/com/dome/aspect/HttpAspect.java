@@ -5,10 +5,12 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -33,9 +35,18 @@ public class HttpAspect {
     @Before("log()")
     public void doBefore(JoinPoint joinPoint) throws Exception {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = attributes.getRequest();
-        String sessionId=request.getSession().getId();
 
+        HttpServletRequest request = attributes.getRequest();
+
+        Cookie[] cookies=request.getCookies();
+        logger.info("cookie个数：{}",String.valueOf(cookies.length));
+
+        logger.info("cookie失效最大时间是：{}", cookies[cookies.length-1].getMaxAge());
+        logger.info("session失效最大时间是：{}",request.getSession().getMaxInactiveInterval());
+        String sessionId=request.getSession().getId();
+        Session session= (Session) request.getSession();
+        logger.info("session失效最大时间是：{}",session.getTimeout());
+        logger.info("cookie失效最大时间是：{}",session.getCookie().getMaxAge());
         StringBuffer url =request.getRequestURL();
         url.append(request.getMethod()).append(sessionId);
 

@@ -1,14 +1,12 @@
 package com.dome.session;
+
 import com.dome.constant.ResultEnum;
 import com.dome.utils.ResultUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
-import org.springframework.security.web.util.UrlUtils;
-import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,36 +34,39 @@ public class AbstractSessionStrategy {
 
 
     public AbstractSessionStrategy(String invalidSessionUrl) {
-        Assert.isTrue(UrlUtils.isValidRedirectUrl(invalidSessionUrl), "url must start with '/' or with 'http(s)'");
-        Assert.isTrue(StringUtils.endsWithIgnoreCase(invalidSessionUrl, ".html"), "url must end with '.html'");
         this.destinationUrl = invalidSessionUrl;
     }
 
 
     protected void onSessionInvalid(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-//        log.info("session失效");
-
+        log.info("session失效");
         if (createNewSession) {
             request.getSession();
         }
-
-        String sourceUrl = request.getRequestURI();
         String targetUrl;
-
-        if (StringUtils.endsWithIgnoreCase(sourceUrl, ".html")) {
-            targetUrl = destinationUrl;
-//            log.info("跳转到:" + targetUrl);
-            redirectStrategy.sendRedirect(request, response, targetUrl);
-        } else {
+        targetUrl = destinationUrl;
+        log.info("跳转到:" + targetUrl);
+//        redirectStrategy.sendRedirect(request, response, targetUrl);
+//        session返回json
             Object result = buildResponseContent(request);
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(objectMapper.writeValueAsString(result));
-        }
-
     }
 
+    protected void onSessionExpired(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        log.info("session过期");
+        if (createNewSession) {
+            request.getSession();
+        }
+        String targetUrl;
+        targetUrl = destinationUrl;
+        log.info("跳转到:" + targetUrl);
+        Object result = buildResponseContent(request);
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setContentType("application/json;charset=UTF-8");
+        response.getWriter().write(objectMapper.writeValueAsString(result));
+    }
     /**
      * @param request
      * @return
