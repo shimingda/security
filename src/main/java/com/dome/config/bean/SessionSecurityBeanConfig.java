@@ -1,6 +1,5 @@
 package com.dome.config.bean;
 
-
 import com.dome.config.properties.SecurityProperties;
 import com.dome.handler.MerryyouLogoutSuccessHandler;
 import com.dome.session.MerryyouExpiredSessionStrategy;
@@ -13,13 +12,6 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 import org.springframework.security.web.session.InvalidSessionStrategy;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 
-/**
- * Created on 2018/1/27 0027.
- *
- * @author zlf
- * @email i@merryyou.cn
- * @since 1.0
- */
 @Configuration
 public class SessionSecurityBeanConfig {
 

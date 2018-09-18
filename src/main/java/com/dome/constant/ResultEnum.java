@@ -1,11 +1,6 @@
 package com.dome.constant;
 
-/**
- * Created on 2017/11/7.
- *
- * @author zlf
- * @since 1.0
- */
+
 public enum ResultEnum {
     UNKONW_ERROR(-1, "未知错误"),
     SUCCESS(0, "成功"),

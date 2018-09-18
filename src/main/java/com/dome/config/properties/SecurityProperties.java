@@ -6,8 +6,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "merryyou.security")
 public class SecurityProperties {
 
-//    private String signOutUrl = "/merryyou-signOut.html";
-    private String signOutUrl = "/merryyou-signOut.html";
+
+    private String signOutUrl;
 
     private LoginType loginType = LoginType.JSON;
 

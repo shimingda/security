@@ -3,14 +3,6 @@ package com.dome.config.properties;
 import com.dome.constant.SecurityConstants;
 import lombok.Data;
 
-/**
- * Created on 2018/1/27 0027.
- *
- * @author zlf
- * @email i@merryyou.cn
- * @since 1.0
- */
-
 @Data
 public class SessionProperties {
     /**

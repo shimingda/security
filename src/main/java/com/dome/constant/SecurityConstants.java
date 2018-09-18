@@ -1,11 +1,5 @@
 package com.dome.constant;
 
-/**
- * Created on 2018/1/4.
- *
- * @author zlf
- * @since 1.0
- */
 public interface SecurityConstants {
 
     /**

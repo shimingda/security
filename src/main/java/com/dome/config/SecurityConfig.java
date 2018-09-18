@@ -96,7 +96,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .requestCache()
                 .requestCache(new HttpSessionRequestCache());
-        //登录验证配置
+        //登录验证配置post验证
         http
                 .formLogin()
                 .loginProcessingUrl("/user/login2")
