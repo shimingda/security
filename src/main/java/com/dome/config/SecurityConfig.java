@@ -3,7 +3,7 @@ package com.dome.config;
 import com.dome.authenticate.AuthenticateProvider;
 import com.dome.authenticate.MyCustomUserService;
 import com.dome.config.properties.SecurityProperties;
-import com.dome.handler.AuthenticationfailureHandler;
+import com.dome.handler.MerryyouAuthenticationfailureHandler;
 import com.dome.handler.MerryyouLoginSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -42,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private MerryyouLoginSuccessHandler myAuthenticationSuccessHandler;
 
     @Autowired
-    private AuthenticationfailureHandler myAuthenticationFailHandler;
+    private MerryyouAuthenticationfailureHandler myAuthenticationFailHandler;
 
     @Autowired
     private SessionRegistry sessionRegistry;
