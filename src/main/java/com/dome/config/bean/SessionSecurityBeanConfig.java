@@ -1,14 +1,13 @@
 package com.dome.config.bean;
 
 import com.dome.config.properties.SecurityProperties;
-import com.dome.handler.MerryyouLogoutSuccessHandler;
+import com.dome.handler.MyLogoutSuccessHandler;
 import com.dome.session.MerryyouExpiredSessionStrategy;
 import com.dome.session.MerryyouInvalidSessionStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.session.InvalidSessionStrategy;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 
@@ -29,8 +28,8 @@ public class SessionSecurityBeanConfig {
     }
 
     @Bean
-    @ConditionalOnMissingBean(LogoutSuccessHandler.class)
-    public LogoutSuccessHandler logoutSuccessHandler(){
-        return new MerryyouLogoutSuccessHandler(securityProperties.getSignOutUrl());
+    @ConditionalOnMissingBean(org.springframework.security.web.authentication.logout.LogoutSuccessHandler.class)
+    public org.springframework.security.web.authentication.logout.LogoutSuccessHandler logoutSuccessHandler(){
+        return new MyLogoutSuccessHandler(securityProperties.getSignOutUrl());
     }
 }

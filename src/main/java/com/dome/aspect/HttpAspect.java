@@ -10,6 +10,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -35,7 +36,9 @@ public class HttpAspect {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 
         HttpServletRequest request = attributes.getRequest();
-        String sessionId=request.getSession().getId();
+        HttpSession session=request.getSession();
+        session.invalidate();
+        String sessionId=session.getId();
 
         StringBuffer url =request.getRequestURL();
         url.append(request.getMethod()).append(sessionId);

@@ -3,7 +3,7 @@ package com.dome.config;
 import com.dome.authenticate.AuthenticateProvider;
 import com.dome.authenticate.MyCustomUserService;
 import com.dome.config.properties.SecurityProperties;
-import com.dome.handler.MerryyouAuthenticationfailureHandler;
+import com.dome.handler.AuthenticationfailureHandler;
 import com.dome.handler.MerryyouLoginSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -26,7 +26,7 @@ import org.springframework.security.web.session.SessionInformationExpiredStrateg
  */
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true,securedEnabled = true)//prePostEnabled使@PreAuthorize生效
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -42,13 +42,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private MerryyouLoginSuccessHandler myAuthenticationSuccessHandler;
 
     @Autowired
-    private MerryyouAuthenticationfailureHandler myAuthenticationFailHandler;
+    private AuthenticationfailureHandler myAuthenticationFailHandler;
 
     @Autowired
     private SessionRegistry sessionRegistry;
 
     @Autowired
     private InvalidSessionStrategy invalidSessionStrategy;
+
+    @Autowired
+    BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
     public void globalConfigure(AuthenticationManagerBuilder auth){
         auth.authenticationProvider(authenticateProvider());
@@ -62,7 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticateProvider authenticateProvider() {
         AuthenticateProvider provider = new AuthenticateProvider();
         provider.setUserDetailsService(userService);
-        provider.setPasswordEncoder(new BCryptPasswordEncoder());
+        provider.setPasswordEncoder(bCryptPasswordEncoder);
         return provider;
     }
 
@@ -78,10 +81,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //权限控制
         http
                 .authorizeRequests()
-                .antMatchers("/user/save","/session/*").permitAll()
+                .antMatchers("/test/save","/session/*").permitAll()
                 .antMatchers("/test/role").hasAnyRole("admin")
                 .antMatchers("/test/permission").hasRole("super_admin")
-                .antMatchers("/user/permission").access("super_admin")
+                .antMatchers("/test/del").access("super_admin")
                 .anyRequest().authenticated();
         //session管理
         http

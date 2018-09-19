@@ -8,9 +8,11 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+
 import java.util.Collection;
 
 /**
@@ -20,21 +22,28 @@ import java.util.Collection;
 public class AuthenticateProvider extends DaoAuthenticationProvider {
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();
         String password = (String) authentication.getCredentials();
         UserDetails user = this.getUserDetailsService().loadUserByUsername(username);
 
-        if (!user.getPassword().equals(passwordEncoder.encode(password))){
-            throw new BadCredentialsException("用户名密码不匹配");
+        logger.debug("validate:" + username + "###" + password);
+        logger.debug("validate:" + username + "###" + user.getPassword());
+        boolean passwordValid =bCryptPasswordEncoder.matches(password,user.getPassword());
+        if (!passwordValid) {
+            throw new BadCredentialsException("密码错误");
         }
         if (user.isEnabled()) {
             throw new BadCredentialsException("用户被禁用");
         }
-        Collection<? extends GrantedAuthority> grantedAuthorities = user.getAuthorities();
+//        Collection<? extends GrantedAuthority> grantedAuthorities = user.getAuthorities();
+//        return new UsernamePasswordAuthenticationToken(user, password,grantedAuthorities);
+        Collection<? extends GrantedAuthority> grantedAuthorities=AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_admin");
         return new UsernamePasswordAuthenticationToken(user, password,grantedAuthorities);
+
     }
 
     @Override

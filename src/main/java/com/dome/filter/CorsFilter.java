@@ -1,5 +1,6 @@
 package com.dome.filter;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
@@ -10,9 +11,8 @@ import java.io.IOException;
  * 跨域
  */
 @Component
+@Slf4j
 public class CorsFilter implements Filter {
-
-    final static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CorsFilter.class);
 
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         HttpServletResponse response = (HttpServletResponse) res;
@@ -20,7 +20,7 @@ public class CorsFilter implements Filter {
         response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
         response.setHeader("Access-Control-Max-Age", "3600");
         response.setHeader("Access-Control-Allow-Headers", "x-requested-with");
-        System.out.println("*********************************过滤器被使用**************************");
+        System.out.println("*********************************执行过滤器**************************");
         chain.doFilter(req, res);
     }
     public void init(FilterConfig filterConfig) {}

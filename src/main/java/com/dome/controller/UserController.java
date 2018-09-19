@@ -7,6 +7,8 @@ import com.dome.service.PermissionService;
 import com.dome.service.RoleService;
 import com.dome.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,21 +23,25 @@ public class UserController {
 
     @Autowired
     private PermissionService permissionService;
-   @RequestMapping("/save")
-    public String user() {
-       SysUser user= userService.getUserByName("test");
+
+    @PostAuthorize("returnObject.username==principal.username")//过滤返回值结果
+    @RequestMapping("/save")
+    public SysUser user() {
+       SysUser user= userService.getUserByName("admin");
        user.setPassword("123");
        System.out.println(user.getId()+"-----"+user.getPassword());
         userService.save(user);
-
-       return user.getUsername();
+       return user;
     }
+
+//    @PreAuthorize("hasAnyRole('ROLE_admin')")//验证角色
     @RequestMapping("/role")
     public String role() {
        Role role=roleService.findById(new Long(1));
         System.out.println(role.getName());
         return role.getName();
     }
+    @PreAuthorize("hasAnyRole('ROLE_Admin')")
     @RequestMapping("/permission")
     public String permission() {
         Permission permission=permissionService.findById(new Long(1001));

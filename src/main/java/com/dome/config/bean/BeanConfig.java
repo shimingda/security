@@ -7,7 +7,6 @@ import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * bean配置
@@ -16,12 +15,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class BeanConfig {
 
+
     @Bean
     public UserDetailsService userDetailsService(){
         return new MyCustomUserService();
     }
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
     @Bean
