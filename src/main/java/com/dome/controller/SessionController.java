@@ -10,13 +10,19 @@ public class SessionController {
 
     @RequestMapping("/session/invalid")
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
+
     public String invalid() {
         return "session invalid";
     }
     @RequestMapping("/session/expired")
+
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
     public String expired() {
 
         return "session expired";
+    }
+    @RequestMapping("/signOutUrl")
+    public String signOutUrl() {
+        return "signOutUrl";
     }
 }

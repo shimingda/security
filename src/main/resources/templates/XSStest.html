@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <?php include('/components/headerinclude.php');?></head>
+    <style type="text/css">
+        .comment-title{
+            font-size:14px;
+            margin: 6px 0px 2px 4px;
+        }
+
+        .comment-body{
+            font-size: 14px;
+            color:#ccc;
+            font-style: italic;
+            border-bottom: dashed 1px #ccc;
+            margin: 4px;
+        }
+    </style>
+    <script type="text/javascript" src="/js/cookies.js"></script>
+<body>
+    <form method="post" action="XSStest.html">
+        <div style="margin:20px;">
+            <div style="font-size:16px;font-weight:bold;">Your Comment</div>
+            <div style="padding:6px;">
+                Nick Name:
+                <br/>
+                <input name="name" type="text" style="width:300px;"/>
+            </div>
+            <div style="padding:6px;">
+                Comment:
+                <br/>
+                <textarea name="comment" style="height:100px; width:300px;"></textarea>
+            </div>
+            <div style="padding-left:230px;">
+                <input type="submit" value="POST" style="padding:4px 0px; width:80px;"/>
+            </div>
+            <div style="border-bottom:solid 1px #fff;margin-top:10px;">
+                <div style="font-size:16px;font-weight:bold;">Comments</div>
+            </div>
+            <?php
+                require('/components/comments.php');
+                if(!empty($_POST['name'])){
+                    addElement($_POST['name'],$_POST['comment']);
+                }
+                renderComments();
+            ?>
+        </div>
+    </form>
+</body>
+</html>

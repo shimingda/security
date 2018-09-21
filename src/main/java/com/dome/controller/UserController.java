@@ -47,10 +47,7 @@ public class UserController {
         Permission permission=permissionService.findById(new Long(1001));
         return permission.getName();
     }
-    @RequestMapping("/del")
-    public String del() {
-        return "del";
-    }
+
     @RequestMapping("/update")
     public String update() {
         return "update";

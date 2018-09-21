@@ -6,6 +6,7 @@ import com.dome.config.properties.SecurityProperties;
 import com.dome.handler.MerryyouAuthenticationfailureHandler;
 import com.dome.handler.MerryyouLoginSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,10 +18,13 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.session.InvalidSessionStrategy;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 
+import javax.sql.DataSource;
 /**
  * 核心配置文件
  */
@@ -45,6 +49,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private MerryyouAuthenticationfailureHandler myAuthenticationFailHandler;
 
     @Autowired
+    private LogoutSuccessHandler logoutSuccessHandler;
+
+    @Autowired
     private SessionRegistry sessionRegistry;
 
     @Autowired
@@ -52,6 +59,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    //注入数据源
+    @Autowired
+    @Qualifier("dataSource")
+    private DataSource dataSource;
+
     @Autowired
     public void globalConfigure(AuthenticationManagerBuilder auth){
         auth.authenticationProvider(authenticateProvider());
@@ -75,30 +88,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         AuthenticationManager manager = super.authenticationManagerBean();
         return manager;
     }
-
+    @Bean
+    public JdbcTokenRepositoryImpl tokenRepository(){
+        JdbcTokenRepositoryImpl j=new JdbcTokenRepositoryImpl();
+        j.setDataSource(dataSource);
+        return j;
+    }
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         //权限控制
         http
                 .authorizeRequests()
-                .antMatchers("/test/save","/session/*").permitAll()
+                .antMatchers("/test/user","/session/*","/index","/").permitAll()
                 .antMatchers("/test/role").hasAnyRole("admin")
                 .antMatchers("/test/permission").hasRole("super_admin")
                 .antMatchers("/test/del").access("super_admin")
                 .anyRequest().authenticated();
-        //session管理
-        http
-                .sessionManagement()
-                .invalidSessionStrategy(invalidSessionStrategy)//session失效策略处理
-                .maximumSessions(securityProperties.getSession().getMaximumSessions())//最大session并发数量1
-                .maxSessionsPreventsLogin(securityProperties.getSession().isMaxSessionsPreventsLogin())//之后的登录踢掉之前的登录
-                .expiredSessionStrategy(sessionInformationExpiredStrategy)//并发过期处理
-                .sessionRegistry(sessionRegistry)
-                ;
-        //http缓存
-        http
-                .requestCache()
-                .requestCache(new HttpSessionRequestCache());
+
         //登录验证配置post验证
         http
                 .formLogin()
@@ -112,18 +118,32 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // 安全退出用户
         http
                 .logout()
-                .logoutUrl("signOut").permitAll()
-                .deleteCookies("")
+                .logoutUrl("/signOut").permitAll()
                 .invalidateHttpSession(true)
-                .logoutSuccessUrl("/");
+                .deleteCookies("JSESSIONID")
+                .logoutSuccessHandler(logoutSuccessHandler);
         // 禁用csrf防御机制(跨域请求伪造)，这么做在测试和开发会比较方便。
+        //session管理
+        http
+                .sessionManagement()
+                .invalidSessionStrategy(invalidSessionStrategy)//session失效策略处理
+                .maximumSessions(securityProperties.getSession().getMaximumSessions())//最大session并发数量1
+                .maxSessionsPreventsLogin(securityProperties.getSession().isMaxSessionsPreventsLogin())//之后的登录踢掉之前的登录
+                .expiredSessionStrategy(sessionInformationExpiredStrategy)//并发过期处理
+                .sessionRegistry(sessionRegistry)
+        ;
+        //http缓存
+        http
+                .requestCache()
+                .requestCache(new HttpSessionRequestCache());
         http
                 .csrf().disable();
         // token管理
-//        http
-//                .rememberMe()
-//                .tokenValiditySeconds(securityProperties.getRememberMeSeconds())
-//                .userDetailsService(userService);
+        http
+                .rememberMe()
+                .tokenValiditySeconds(securityProperties.getRememberMeSeconds())
+                .tokenRepository(tokenRepository())
+                .userDetailsService(userService);
         http.httpBasic();
     }
 }
